@@ -15,7 +15,10 @@ function App() {
 
   return (
     <div>
-      {productDetails.length > 0 && productDetails[0].title}
+      {productDetails.length > 0 && 
+      <ul>
+        {productDetails.map((product) => <li key={product.id}>{product.title}</li>)}
+      </ul>}
     </div>
   )
 }

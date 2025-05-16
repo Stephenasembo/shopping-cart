@@ -7,27 +7,6 @@ function App() {
   const [dataAvailable, setDataAvailable] = useState(false)
   const [error, setError] = useState(false)
 
-  useEffect(() => {
-    (async () => {
-      try {
-        let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
-        if (productResponse.status === 200) {
-          let products = await productResponse.json();
-          setProductDetails(products)
-          setDataAvailable(true)
-        } else {
-            throw new Error('An error occurred')
-        }
-      }
-      catch {
-        setError(true)
-      }
-      finally {
-        setLoading(false)
-      }
-    })()      
-  }, [])
-
   async function fetchData() {
     try{
       let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
@@ -46,6 +25,10 @@ function App() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
     <div>

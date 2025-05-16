@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 function App() {
   const [productDetails, setProductDetails] = useState([])
   const [loading, setLoading] = useState(true)
+  const [dataAvailable, setDataAvailable] = useState(false)
   useEffect(() => {
     (async () => {
       let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
@@ -10,6 +11,7 @@ function App() {
         let products = await productResponse.json();
         setProductDetails(products)
         setLoading(false)
+        setDataAvailable(true)
       }
     })()
   }, [])
@@ -22,7 +24,7 @@ function App() {
           Hang tight while we fetch the latest products.
         </div>
       }
-      {productDetails.length > 0 &&
+      {dataAvailable &&
       <ul>
         {productDetails.map((product) => <li key={product.id}>{product.title}</li>)}
       </ul>}

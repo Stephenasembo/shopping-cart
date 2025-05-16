@@ -9,6 +9,8 @@ function App() {
 
   async function fetchData() {
     try{
+      setLoading(true)
+      setError(false)
       let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
       if (productResponse.status === 200) {
         let products = await productResponse.json();

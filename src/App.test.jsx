@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
 import userEvent from '@testing-library/user-event';
 import Card from './components/Card'
+import Input from './components/Input'
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -95,5 +96,15 @@ describe('Cards created and displayed correctly', () => {
       expect(screen.getByPlaceholderText('Number of items')).toBeInTheDocument()
       expect(screen.getByText(/Test Product 1/)).toBeInTheDocument()
     })
+  })
+})
+
+describe('Input component is controlled', () => {
+  it('Updates value on change', async () => {
+    let user = userEvent.setup()
+    render(<Input id='test-input' placeholder='test-input' type='text'/>)
+    let input = screen.getByPlaceholderText('test-input')
+    await user.type(input, 'Test value')
+    expect(await screen.findByDisplayValue('Test value')).toBeInTheDocument()
   })
 })

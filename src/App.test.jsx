@@ -1,8 +1,8 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
-import { RetryBtn } from './components/Button';
 import userEvent from '@testing-library/user-event';
+import Card from './components/Card'
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -67,5 +67,33 @@ describe('Data fetching works correctly', () => {
       expect(product).toBeInTheDocument()
     })
 
+  })
+})
+
+describe('Cards created and displayed correctly', () => {
+  beforeEach(() => {
+    let mockedFetch;
+    mockedFetch = vi.fn();
+    vi.stubGlobal('fetch', mockedFetch);
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1'
+      }]
+    })
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('Displays card with the right elements', async () => {
+    render(<App />)
+    await waitFor(() => {
+      expect(screen.getByRole('img')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Number of items')).toBeInTheDocument()
+      expect(screen.getByText(/Test Product 1/)).toBeInTheDocument()
+    })
   })
 })

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {RetryBtn} from './components/Button'
+import Card from "./components/Card";
 
 function App() {
   const [productDetails, setProductDetails] = useState([])
@@ -43,7 +44,15 @@ function App() {
       {
         dataAvailable &&
         <ul>
-          {productDetails.map((product) => <li key={product.id}>{product.title}</li>)}
+          {productDetails.map((product) => (
+            <li
+            key={product.id}>
+              <Card
+              imageUrl={product.image}
+              productName={product.title}
+              />
+            </li>
+            ))}
         </ul>
       }
       {

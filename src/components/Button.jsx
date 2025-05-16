@@ -1,6 +1,6 @@
-function RetryBtn() {
+function RetryBtn({retryFn}) {
   return (
-    <button>Retry fetching products</button>
+    <button onClick={retryFn}>Retry fetching products</button>
   )
 }
 

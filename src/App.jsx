@@ -28,6 +28,25 @@ function App() {
     })()      
   }, [])
 
+  async function fetchData() {
+    try{
+      let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
+      if (productResponse.status === 200) {
+        let products = await productResponse.json();
+        setProductDetails(products)
+        setDataAvailable(true)
+      } else {
+          throw new Error('An error occurred')
+      }
+    }
+    catch {
+      setError(true)
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div>
       {
@@ -48,7 +67,7 @@ function App() {
           <p>
             Oops! An error occured while fetching products.
           </p>
-          <RetryBtn />
+          <RetryBtn retryFn={fetchData}/>
         </div>
       }
     </div>

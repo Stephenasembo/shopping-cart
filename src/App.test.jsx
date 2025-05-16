@@ -2,6 +2,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
 import { RetryBtn } from './components/Button';
+import userEvent from '@testing-library/user-event';
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -41,7 +42,7 @@ describe('Data fetching works correctly', () => {
 
   describe('Data fetching retry works', () => {
     beforeEach(() => {
-      mockedFetch.mockResolvedValue({
+      mockedFetch.mockResolvedValueOnce({
         status: 400
       })
     })
@@ -49,8 +50,22 @@ describe('Data fetching works correctly', () => {
     it('Displays a retry button', async () => {
       render(<App />)
       await waitFor(() => {
-        expect(screen.getByRole('button', {name: 'Retry fetching products'})).toBeInTheDocument()
+        expect(screen.getByRole('button', {name: /Retry/i})).toBeInTheDocument()
       })
     })
+
+    it('Retries data fetching on retry button click', async () => {
+      mockedFetch.mockResolvedValueOnce({
+        status: 200,
+        json: async () => [{ id: 1, title: 'Test Product 1'}]
+      })
+      let user = userEvent.setup()
+      render(<App />)
+      let btn = await screen.findByRole('button', {name: /Retry/i})
+      await user.click(btn)      
+      let product = await screen.findByText('Test Product 1')
+      expect(product).toBeInTheDocument()
+    })
+
   })
 })

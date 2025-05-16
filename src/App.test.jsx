@@ -7,7 +7,7 @@ describe('Data fetching works correctly', () => {
   beforeEach(() => {
     mockedFetch = vi.fn()
     vi.stubGlobal('fetch', mockedFetch)
-    mockedFetch.mockResolvedValueOnce({
+    mockedFetch.mockResolvedValue({
       status: 200,
       json: async () => [{ id: 1, title: 'Test Product 1'}]
     })
@@ -26,5 +26,15 @@ describe('Data fetching works correctly', () => {
   it('Displays a loading screen', () => {
     render(<App />)
     expect(screen.getByText('Hang tight while we fetch the latest products.')).toBeInTheDocument()
+  })
+
+  it('Displays an error on data fetching errors', async () => {
+    mockedFetch.mockResolvedValue({
+      status: 400
+    })
+    render(<App />)
+    await waitFor(() => {
+      expect(screen.getByText('Oops! An error occured while fetching products.')).toBeInTheDocument()
+    })
   })
 })

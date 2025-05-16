@@ -9,16 +9,23 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
-      if (productResponse.status === 200) {
-        let products = await productResponse.json();
-        setProductDetails(products)
-        setLoading(false)
-        setDataAvailable(true)
-      } else {
+      try {
+        let productResponse = await fetch('https://fakestoreapi.com/products', { mode: 'cors' })
+        if (productResponse.status === 200) {
+          let products = await productResponse.json();
+          setProductDetails(products)
+          setDataAvailable(true)
+        } else {
+            throw new Error('An error occurred')
+        }
+      }
+      catch {
         setError(true)
       }
-    })()
+      finally {
+        setLoading(false)
+      }
+    })()      
   }, [])
 
   return (

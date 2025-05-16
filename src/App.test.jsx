@@ -1,6 +1,7 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
+import { RetryBtn } from './components/Button';
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -35,6 +36,21 @@ describe('Data fetching works correctly', () => {
     render(<App />)
     await waitFor(() => {
       expect(screen.getByText('Oops! An error occured while fetching products.')).toBeInTheDocument()
+    })
+  })
+
+  describe('Data fetching retry works', () => {
+    beforeEach(() => {
+      mockedFetch.mockResolvedValue({
+        status: 400
+      })
+    })
+
+    it('Displays a retry button', async () => {
+      render(<App />)
+      await waitFor(() => {
+        expect(screen.getByRole('button', {name: 'Retry fetching products'})).toBeInTheDocument()
+      })
     })
   })
 })

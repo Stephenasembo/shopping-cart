@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {RetryBtn} from './components/Button'
 
 function App() {
   const [productDetails, setProductDetails] = useState([])
@@ -37,7 +38,10 @@ function App() {
       {
         error &&
         <div>
-          Oops! An error occured while fetching products.
+          <p>
+            Oops! An error occured while fetching products.
+          </p>
+          <RetryBtn />
         </div>
       }
     </div>

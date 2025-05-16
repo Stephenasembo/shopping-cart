@@ -22,4 +22,9 @@ describe('Data fetching works correctly', () => {
       expect(screen.getByText('Test Product 1')).toBeInTheDocument()
     })
   })
+
+  it('Displays a loading screen', () => {
+    render(<App />)
+    expect(screen.getByText('Hang tight while we fetch the latest products.')).toBeInTheDocument()
+  })
 })

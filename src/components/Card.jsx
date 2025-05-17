@@ -1,4 +1,5 @@
 import Input from './Input'
+import Button from './Button'
 
 export default function Card({imageUrl, productName}) {
   return (
@@ -10,10 +11,10 @@ export default function Card({imageUrl, productName}) {
         <Input type="text" placeholder="Number of items" id='itemsNumber'/>
       </label>
       <p>
-        <button>+</button>
-        <button>-</button>
+        <Button text='+'/>
+        <Button text='-'/>
       </p>
-      <button>Add to cart</button>
-    </div>
+      <Button text='Add to cart'/>
+      </div>
   )
 }

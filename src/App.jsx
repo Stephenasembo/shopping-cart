@@ -63,7 +63,9 @@ function App() {
           <p>
             Oops! An error occured while fetching products.
           </p>
-          <RetryBtn retryFn={fetchData}/>
+          <Button
+          text='Retry fetching products'
+          onClick={fetchData}/>
         </div>
       }
     </div>

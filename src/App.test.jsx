@@ -6,6 +6,9 @@ import Card from './components/Card'
 import Input from './components/Input'
 import NavigationBar from './components/Navbar';
 import Button from './components/Button';
+import Layout from './Layout'
+import {MemoryRouter, Routes, Route} from 'react-router-dom'
+import Cart from './components/Cart'
 
 describe.skip('Data fetching works correctly', () => {
   let mockedFetch
@@ -143,5 +146,46 @@ describe('Button component works correctly', () => {
     render(<Button onClick={testFn} text='Test Button'/>)
     await user.click(screen.getByText('Test Button'))
     expect(testFn).toHaveReturned(3)
+  })
+})
+
+describe('Product buttons work correctly', () => {
+  let mockedFetch
+  beforeEach(() => {
+    mockedFetch = vi.fn()
+    vi.stubGlobal('fetch', mockedFetch)
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1'
+      }]
+    })
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('Adds product to cart', async () => {
+    let user = userEvent.setup()    
+    render(
+    <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path='/' element={<Layout />}>
+          <Route index element={<App />} />
+          <Route path='/cart' element={<Cart />}/>
+        </Route>
+      </Routes>
+    </MemoryRouter>
+    )
+    let btns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    await user.click(btns[0])
+    expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
+
+    let link = screen.getByRole('link', {name: /Cart/i})
+    await user.click(link)
+    screen.debug()
+    expect(screen.getByText(/Products added to cart/i)).toBeInTheDocument()
   })
 })

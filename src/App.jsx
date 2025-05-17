@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import Card from "./components/Card";
 import NavigationBar from "./components/Navbar";
+import { useOutletContext } from "react-router-dom";
 
 function App() {
   const [productDetails, setProductDetails] = useState([])
   const [loading, setLoading] = useState(true)
   const [dataAvailable, setDataAvailable] = useState(false)
   const [error, setError] = useState(false)
+  const {cartProducts, setCartProducts} = useOutletContext()
 
   async function fetchData() {
     try{
@@ -29,13 +31,18 @@ function App() {
     }
   }
 
+  function addToCart(e) {
+    let btnId = ((e.currentTarget.id).split('product'))[1]
+    setCartProducts([...cartProducts, btnId])
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
 
   return (
     <div>
-      <NavigationBar addedProducts={[]}/>
+      <NavigationBar addedProducts={cartProducts}/>
       {
         loading &&
         <div>
@@ -51,6 +58,8 @@ function App() {
               <Card
               imageUrl={product.image}
               productName={product.title}
+              productId={product.id}
+              addProduct={(e) => {addToCart(e)}}
               />
             </li>
             ))}

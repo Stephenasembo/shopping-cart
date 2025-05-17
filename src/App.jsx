@@ -33,7 +33,7 @@ function App() {
 
   function addToCart(e) {
     let btnId = ((e.currentTarget.id).split('product'))[1]
-    setCartProducts([...cartProducts, btnId])
+    setCartProducts(new Set([...cartProducts, btnId]))
   }
 
   useEffect(() => {

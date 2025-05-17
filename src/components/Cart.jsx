@@ -7,7 +7,7 @@ export default function Cart() {
   return (
     <div>
       <NavigationBar addedProducts={cartProducts} />
-      {cartProducts.length > 0 ?
+      {cartProducts.size > 0 ?
         <span>Products added</span> :
         <span>No products added to cart yet.</span>
       }

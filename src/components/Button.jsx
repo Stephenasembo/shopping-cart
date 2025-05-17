@@ -1,7 +1,5 @@
-function RetryBtn({retryFn}) {
+export default function Button({text, onClick}) {
   return (
-    <button onClick={retryFn}>Retry fetching products</button>
+    <button onClick={onClick}>{text}</button>
   )
 }
-
-export { RetryBtn }

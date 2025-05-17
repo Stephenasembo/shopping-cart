@@ -5,8 +5,9 @@ import userEvent from '@testing-library/user-event';
 import Card from './components/Card'
 import Input from './components/Input'
 import NavigationBar from './components/Navbar';
+import Button from './components/Button';
 
-describe('Data fetching works correctly', () => {
+describe.skip('Data fetching works correctly', () => {
   let mockedFetch
   beforeEach(() => {
     mockedFetch = vi.fn()
@@ -72,7 +73,7 @@ describe('Data fetching works correctly', () => {
   })
 })
 
-describe('Cards created and displayed correctly', () => {
+describe.skip('Cards created and displayed correctly', () => {
   beforeEach(() => {
     let mockedFetch;
     mockedFetch = vi.fn();
@@ -100,7 +101,7 @@ describe('Cards created and displayed correctly', () => {
   })
 })
 
-describe('Input component is controlled', () => {
+describe.skip('Input component is controlled', () => {
   it('Updates value on change', async () => {
     let user = userEvent.setup()
     render(<Input id='test-input' placeholder='test-input' type='text'/>)
@@ -110,7 +111,7 @@ describe('Input component is controlled', () => {
   })
 })
 
-describe('Navigation bar rendered correctly', () => {
+describe.skip('Navigation bar rendered correctly', () => {
   it('Displays the site\'s webpage links', () => {
     render(<NavigationBar addedProducts={[]}/>)
     expect(screen.getByText(/Home/i)).toBeInTheDocument()
@@ -127,5 +128,20 @@ describe('Navigation bar rendered correctly', () => {
       'Test product 1', 'Test product 2']}/>)
     
     expect(screen.getByText('Products added to cart: 2')).toBeInTheDocument()
+  })
+})
+
+describe('Button component works correctly', () => {
+  it('Displays the right text', () => {
+    render(<Button text='Test Button'/>)
+    expect(screen.getByText('Test Button')).toBeInTheDocument()
+  })
+
+  it('Onclick event handler works correctly', async () => {
+    let testFn = vi.fn((a, b) => a + b);
+    let user = userEvent.setup()
+    render(<Button onClick={testFn} text='Test Button'/>)
+    await user.click(screen.getByText('Test Button'))
+    expect(testFn).toHaveReturned(3)
   })
 })

@@ -4,6 +4,7 @@ import App from './App'
 import userEvent from '@testing-library/user-event';
 import Card from './components/Card'
 import Input from './components/Input'
+import NavigationBar from './components/Navbar';
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -106,5 +107,25 @@ describe('Input component is controlled', () => {
     let input = screen.getByPlaceholderText('test-input')
     await user.type(input, 'Test value')
     expect(await screen.findByDisplayValue('Test value')).toBeInTheDocument()
+  })
+})
+
+describe('Navigation bar rendered correctly', () => {
+  it('Displays the site\'s webpage links', () => {
+    render(<NavigationBar addedProducts={[]}/>)
+    expect(screen.getByText(/Home/i)).toBeInTheDocument()
+    expect(screen.getByText(/Cart/i)).toBeInTheDocument()
+  })
+
+  it('Displays no message if no products added', () => {
+    render(<NavigationBar addedProducts={[]} />)
+    expect(screen.queryByText(/Products added to cart/i)).not.toBeInTheDocument()
+  })
+
+  it('Displays correct number of products added to cart', () => {
+    render(<NavigationBar addedProducts={[
+      'Test product 1', 'Test product 2']}/>)
+    
+    expect(screen.getByText('Products added to cart: 2')).toBeInTheDocument()
   })
 })

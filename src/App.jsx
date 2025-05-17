@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import {RetryBtn} from './components/Button'
 import Card from "./components/Card";
 import NavigationBar from "./components/Navbar";
 

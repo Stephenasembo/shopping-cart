@@ -225,5 +225,7 @@ describe.only('Cart UI logic implemented correctly', () => {
     await user.click(await screen.findByText(/Add to cart/i))
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(screen.getByRole('img')).toBeInTheDocument()
+    screen.debug()
+    expect(screen.getByText(/Product: Test Product 1/i)).toBeInTheDocument()
   })
 })

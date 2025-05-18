@@ -31,14 +31,37 @@ function App() {
     }
   }
 
-  function addToCart(e) {
-    let btnId = ((e.currentTarget.id).split('product'))[1]
+  function addToCart(e, productId = null) {
+    let btnId;
+
+    if(!e) {
+      btnId = productId
+    } else{
+      btnId = ((e.currentTarget.id).split('product'))[1]
+    }
+
     let selectedProduct = productDetails.find((product) => {
       return product.id === Number(btnId)
     })
     let newProducts = new Map([...cartProducts])
     newProducts.set(btnId, selectedProduct)
     setCartProducts(newProducts)
+  }
+
+  function increaseQuantity(e) {
+    let btnId = ((e.currentTarget.id).split('increment'))[1]
+    if(cartProducts.has(btnId)) {
+      let newCart = new Map([...cartProducts])
+      let selectedProduct = newCart.get(btnId)
+      let updatedProduct = {
+        ...selectedProduct,
+        quantity: selectedProduct.quantity + 1
+      }
+      newCart.set(btnId, updatedProduct)
+      setCartProducts(newCart)
+    } else {
+      addToCart(null, btnId)
+    }
   }
 
   useEffect(() => {
@@ -65,6 +88,7 @@ function App() {
               productName={product.title}
               productId={product.id}
               addProduct={(e) => {addToCart(e)}}
+              incrementFn={(e) => increaseQuantity(e)}
               />
             </li>
             ))}

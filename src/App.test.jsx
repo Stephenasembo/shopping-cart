@@ -291,3 +291,53 @@ describe('Added product can be deleted by user', () => {
     expect(screen.getByText(/Test Product 2/i)).toBeInTheDocument()
   })
 })
+
+describe.only('Product quantity adjustable', () => {
+  let mockedFetch
+  let user
+  beforeEach(() => {
+    mockedFetch = vi.fn()
+    vi.stubGlobal('fetch', mockedFetch)
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1',
+        quantity: 1,
+      }],
+    })
+
+    user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+
+
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('Increment button adds product to cart if yet to be added', async () => {
+    let incrementBtn = await screen.findByText('+')
+    await user.click(incrementBtn)
+    expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
+  })
+
+  it('Increment button increases quantity of added product in the cart by 1', async () => {
+    let incrementBtn = await screen.findByText('+')
+    await user.click(incrementBtn)
+    await user.click(incrementBtn)
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText(/Quantity: 2/i)).toBeInTheDocument()
+  })
+})

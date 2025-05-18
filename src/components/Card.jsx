@@ -6,6 +6,8 @@ export default function Card({
   productName,
   productId,
   addProduct,
+  incrementFn,
+  decrementFn,
   }) {
   return (
     <div>
@@ -16,8 +18,17 @@ export default function Card({
         <Input type="text" placeholder="Number of items" id='itemsNumber'/>
       </label>
       <p>
-        <Button text='+' id='increment'/>
-        <Button text='-' id='decrement'/>
+        <Button
+        text='+'
+        id={`increment${productId}`}
+        onClick={incrementFn}
+        />
+
+        <Button
+        text='-'
+        id={`decrement${productId}`}
+        onClick={decrementFn}
+        />
       </p>
       <Button
       text='Add to cart'

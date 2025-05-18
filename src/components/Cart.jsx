@@ -12,6 +12,13 @@ export default function Cart() {
     setCartProducts(newCart)
   }
 
+  function calculateTotal() {
+    let productPriceArr = [...cartProducts.values()]
+    return productPriceArr.reduce((total, item) => {
+      return total + (item.price * item.quantity)
+    }, 0)
+  }
+
   return (
     <div>
       <NavigationBar addedProducts={cartProducts} />
@@ -35,6 +42,9 @@ export default function Cart() {
                 })
               }
             </ul>
+            <div>
+              Your total is: {calculateTotal()}
+            </div>
         </div> :
         <span>No products added to cart yet.</span>
       }

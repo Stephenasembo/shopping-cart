@@ -292,7 +292,7 @@ describe('Added product can be deleted by user', () => {
   })
 })
 
-describe.only('Product quantity adjustable', () => {
+describe('Product quantity adjustable', () => {
   let mockedFetch
   let user
   beforeEach(() => {
@@ -396,5 +396,107 @@ describe.only('Product quantity adjustable', () => {
     expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(await screen.findByText(/Quantity: 10/i)).toBeInTheDocument()
+  })
+})
+
+describe.only('Price calculation done correctly', () => {
+  let mockedFetch
+  let user
+  beforeEach(() => {
+    mockedFetch = vi.fn()
+    vi.stubGlobal('fetch', mockedFetch)
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1',
+        quantity: 1,
+        price: 100,
+      },
+      {
+          id: 2,
+          image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+          title: 'Test Product 2',
+          quantity: 1,
+          price: 100,
+      },
+    ],
+    })
+
+    user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('No total message for empty cart', async() => {
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.queryByText(/Total/i)).not.toBeInTheDocument()
+  })
+
+  it('Displays total message', async() => {
+    let addBtns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    await user.click(addBtns[0])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText(/Total/i)).toBeInTheDocument()
+  })
+
+  it('Calculates total price for a single item', async() => {
+    let addBtns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    await user.click(addBtns[0])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText('Your total is: 100')).toBeInTheDocument()
+  })
+
+  it('Calculates multiple products\' price', async() => {
+    let addBtns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    await user.click(addBtns[0])
+    await user.click(addBtns[1])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText('Your total is: 200')).toBeInTheDocument()
+  })
+
+  it('Calculates multiple products with more than 1 quantity', async() => {
+    let addBtns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    let incrementBtns = await screen.findAllByText('+')
+    await user.click(addBtns[0])
+    await user.click(addBtns[1])
+    await user.click(incrementBtns[0])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText('Your total is: 300')).toBeInTheDocument()
+  })
+
+  it('Updates total on quantity or price deletion', async() => {
+    let addBtns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    let incrementBtns = await screen.findAllByText('+')
+    await user.click(addBtns[0])
+    await user.click(addBtns[1])
+    await user.click(incrementBtns[0])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText('Your total is: 300')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', {name: 'Home'}))
+    expect(await screen.findByText(/Products added/i)).toBeInTheDocument()
+
+    let decrementBtns = await screen.findAllByText('-')
+    await user.click(decrementBtns[0])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText('Your total is: 200')).toBeInTheDocument()
+    
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    await user.click(deleteBtns[0])
+    expect(screen.getByText('Your total is: 100')).toBeInTheDocument()
   })
 })

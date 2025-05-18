@@ -231,6 +231,7 @@ describe('Cart UI logic implemented correctly', () => {
 
 describe('Added product can be deleted by user', () => {
   let mockedFetch
+  let user
   beforeEach(() => {
     mockedFetch = vi.fn()
     vi.stubGlobal('fetch', mockedFetch)
@@ -241,15 +242,17 @@ describe('Added product can be deleted by user', () => {
         image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
         title: 'Test Product 1',
         quantity: 1,
-      }],
+      },
+      {
+        id: 2,
+        image:  './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 2',
+        quantity: 1,
+      },
+      ],
     })
-  })
-  afterEach(() => {
-    vi.unstubAllGlobals()
-  })
 
-  it('Delete button works', async () => {
-    let user = userEvent.setup()
+    user = userEvent.setup()
     render(
       <MemoryRouter initialEntries={['/']}>
       <Routes>
@@ -260,13 +263,31 @@ describe('Added product can be deleted by user', () => {
       </Routes>
     </MemoryRouter>
     )
+  })
 
-    await user.click(await screen.findByText(/Add to cart/i))
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('Empty cart after deleting all products', async () => {
+    let addBtns = await screen.findAllByText(/Add to cart/i)
+    await user.click(addBtns[0])
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    let deleteBtn = screen.getByRole('button', {name: /Remove product from cart/i})
-    expect(deleteBtn).toBeInTheDocument()
-
-    await user.click(deleteBtn)
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    expect(deleteBtns[0]).toBeInTheDocument() 
+    await user.click(deleteBtns[0])
+    expect(screen.queryByText(/TestProduct 1/i)).not.toBeInTheDocument()
     expect(screen.getByText(/No products added/i)).toBeInTheDocument()
+  })
+
+  it('Only selected product deleted', async() => {
+    let addBtns = await screen.findAllByText(/Add to cart/i)
+    await user.click(addBtns[0])
+    await user.click(addBtns[1])
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    await user.click(deleteBtns[0])
+    expect(screen.queryByText(/TestProduct 1/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/Test Product 2/i)).toBeInTheDocument()
   })
 })

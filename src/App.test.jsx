@@ -340,4 +340,25 @@ describe.only('Product quantity adjustable', () => {
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(screen.getByText(/Quantity: 2/i)).toBeInTheDocument()
   })
+
+  it('Decrement button decreases quantity of added product by 1', async() => {
+    let incrementBtn = await screen.findByText('+')
+    let decrementBtn = await screen.findByText('-')
+    await user.click(incrementBtn)
+    await user.click(incrementBtn)
+    await user.click(decrementBtn)
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.queryByText(/Quantity: 2/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/Quantity: 1/i)).toBeInTheDocument()
+  })
+
+  it('Decrement button removes product from cart', async () => {
+    let incrementBtn = await screen.findByText('+')
+    let decrementBtn = await screen.findByText('-')
+    await user.click(incrementBtn)
+    await user.click(decrementBtn)
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.queryByText(/Quantity: 1/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/No products added/i)).toBeInTheDocument()
+  })
 })

@@ -64,6 +64,27 @@ function App() {
     }
   }
 
+  function decreaseQuantity(e) {
+    let btnId = ((e.currentTarget.id).split('decrement'))[1]
+    if(cartProducts.has(btnId)) {
+      let initialQuantity = (cartProducts.get(btnId)).quantity
+      let newCart = new Map([...cartProducts])
+
+      if(initialQuantity === 1) {
+        newCart.delete(btnId)
+        setCartProducts(newCart)
+      } else {
+        let selectedProduct = newCart.get(btnId)
+        let updatedProduct = {
+          ...selectedProduct,
+          quantity: selectedProduct.quantity - 1
+        }
+        newCart.set(btnId, updatedProduct)
+        setCartProducts(newCart)
+      }
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -89,6 +110,7 @@ function App() {
               productId={product.id}
               addProduct={(e) => {addToCart(e)}}
               incrementFn={(e) => increaseQuantity(e)}
+              decrementFn={(e) => decreaseQuantity(e)}
               />
             </li>
             ))}

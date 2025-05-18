@@ -361,4 +361,40 @@ describe.only('Product quantity adjustable', () => {
     expect(screen.queryByText(/Quantity: 1/i)).not.toBeInTheDocument()
     expect(screen.getByText(/No products added/i)).toBeInTheDocument()
   })
+
+  it('Quantity provided by user adds product to cart', async () => {
+    let input = await screen.findByPlaceholderText('Quantity')
+    let submitBtn = await screen.findByText('Submit')
+    await user.type(input, '1')
+    await user.click(submitBtn)
+
+    expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
+  })
+
+  it('Input provided determines product quantity', async() => {
+    let input = await screen.findByPlaceholderText('Quantity')
+    let submitBtn = await screen.findByText('Submit')
+    await user.type(input, '10')
+    await user.click(submitBtn)
+
+    expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(screen.getByText(/Quantity: 10/i)).toBeInTheDocument()
+  })
+
+  it('Input provided modifies product quantity', async() => {
+    let input = await screen.findByPlaceholderText('Quantity')
+    let submitBtn = await screen.findByText('Submit')
+    let addBtn = await screen.findByText('Add to cart')
+    let incrementBtn = await screen.findByText('+')
+
+    await user.click(addBtn)
+    await user.click(incrementBtn)
+    await user.type(input, '10')
+    await user.click(submitBtn)
+
+    expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    expect(await screen.findByText(/Quantity: 10/i)).toBeInTheDocument()
+  })
 })

@@ -1,15 +1,24 @@
-import { useState } from "react"
+export default function Input({type, placeholder, id, value, setValue}) {
 
-export default function Input({type, placeholder, id}) {
-  const [value, setValue] = useState('')
-
-  return (
+  return type === 'number' ?
+    (
     <input 
     type={type}
     placeholder={placeholder}
     id={id}
     value={value}
     onChange={(e) => setValue(e.target.value)}
+    min={1}
+    step={1}
     />
-  )
+    ):
+    (
+      <input
+      type={type}
+      placeholder={placeholder}
+      id={id}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}  
+      />
+    )
 }

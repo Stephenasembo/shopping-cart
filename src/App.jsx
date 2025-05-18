@@ -85,6 +85,31 @@ function App() {
     }
   }
 
+  function submitQuantity(e, inputVal) {
+    let value = Number(inputVal)
+    let productId = ((e.currentTarget.id).split('submit'))[1]
+    if(value === 1) {
+      addToCart(null, productId)
+    } else if(value > 1) {
+        if(cartProducts.has(productId)) {
+          let newCart = new Map([...cartProducts])
+          let selectedProduct = newCart.get(productId)
+          let updatedProduct = {
+            ...selectedProduct,
+            quantity: value
+          }
+          newCart.set(productId, updatedProduct)
+          setCartProducts(newCart)  
+        } else {
+          let product = productDetails.find((item) => productId === item.id)
+          let newCart = new Map([...cartProducts])
+          let updatedProduct = {...product, quantity: value}
+          newCart.set(productId, updatedProduct)
+          setCartProducts(newCart)
+        }
+    }
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -111,6 +136,7 @@ function App() {
               addProduct={(e) => {addToCart(e)}}
               incrementFn={(e) => increaseQuantity(e)}
               decrementFn={(e) => decreaseQuantity(e)}
+              submitFn={submitQuantity}
               />
             </li>
             ))}

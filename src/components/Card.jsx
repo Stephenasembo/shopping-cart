@@ -1,5 +1,6 @@
 import Input from './Input'
 import Button from './Button'
+import { useState } from 'react'
 
 export default function Card({
   imageUrl,
@@ -8,15 +9,34 @@ export default function Card({
   addProduct,
   incrementFn,
   decrementFn,
+  submitFn,
   }) {
+  const [quantity, setQuantity] = useState(0)
+
   return (
     <div>
       <img src={imageUrl} width={100} height={100}/>
       <h3>{productName}</h3>
-      <label htmlFor='itemsNumber'>
-        Input number of items to purchase:
-        <Input type="text" placeholder="Number of items" id='itemsNumber'/>
-      </label>
+      <form>
+        <label htmlFor='itemsNumber'>
+          Input number of items to purchase:
+          <Input
+          type="number"
+          placeholder="Quantity"
+          id={`input${productId}`}
+          value={quantity}
+          setValue={setQuantity}
+          />
+        </label>
+        <Button
+        text='Submit'
+        id={`submit${productId}`}
+        onClick={(e) => {
+          e.preventDefault()
+          submitFn(e, quantity)
+        }}
+        />
+      </form>
       <p>
         <Button
         text='+'

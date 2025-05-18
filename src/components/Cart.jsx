@@ -5,6 +5,13 @@ import { useOutletContext } from "react-router-dom";
 export default function Cart() {
   const {cartProducts, setCartProducts} = useOutletContext()
   
+  function removeProduct(e) {
+    let btnId = ((e.currentTarget.id).split('remove'))[1]
+    let newCart = new Map([...cartProducts])
+    newCart.delete(btnId)
+    setCartProducts(newCart)
+  }
+
   return (
     <div>
       <NavigationBar addedProducts={cartProducts} />
@@ -20,6 +27,8 @@ export default function Cart() {
                       name={value.title}
                       price={value.price}
                       quantity={value.quantity}
+                      id={value.id}
+                      onClick={(e) => removeProduct(e)}
                       />
                     </li>
                   )

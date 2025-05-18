@@ -190,7 +190,7 @@ describe('Product buttons work correctly', () => {
   })
 })
 
-describe.only('Cart UI logic implemented correctly', () => {
+describe('Cart UI logic implemented correctly', () => {
   let mockedFetch
   beforeEach(() => {
     mockedFetch = vi.fn()
@@ -225,7 +225,48 @@ describe.only('Cart UI logic implemented correctly', () => {
     await user.click(await screen.findByText(/Add to cart/i))
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(screen.getByRole('img')).toBeInTheDocument()
-    screen.debug()
     expect(screen.getByText(/Product: Test Product 1/i)).toBeInTheDocument()
+  })
+})
+
+describe('Added product can be deleted by user', () => {
+  let mockedFetch
+  beforeEach(() => {
+    mockedFetch = vi.fn()
+    vi.stubGlobal('fetch', mockedFetch)
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1',
+        quantity: 1,
+      }],
+    })
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('Delete button works', async () => {
+    let user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path='/' element={<Layout />}>
+          <Route index element={<App />} />
+          <Route path='/cart' element={<Cart />}/>
+        </Route>
+      </Routes>
+    </MemoryRouter>
+    )
+
+    await user.click(await screen.findByText(/Add to cart/i))
+    await user.click(screen.getByRole('link', {name: 'Cart'}))
+    let deleteBtn = screen.getByRole('button', {name: /Remove product from cart/i})
+    expect(deleteBtn).toBeInTheDocument()
+
+    await user.click(deleteBtn)
+    expect(screen.getByText(/No products added/i)).toBeInTheDocument()
   })
 })

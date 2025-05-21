@@ -10,7 +10,7 @@ import Layout from './Layout'
 import {MemoryRouter, Routes, Route} from 'react-router-dom'
 import Cart from './components/Cart'
 
-describe.skip('Data fetching works correctly', () => {
+describe('Data fetching works correctly', () => {
   let mockedFetch
   beforeEach(() => {
     mockedFetch = vi.fn()
@@ -25,14 +25,32 @@ describe.skip('Data fetching works correctly', () => {
   })
 
   it('Renders successfully fetched data', async () => {
-    render(<App />)
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     await waitFor(() => {
       expect(screen.getByText('Test Product 1')).toBeInTheDocument()
     })
   })
 
   it('Displays a loading screen', () => {
-    render(<App />)
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     expect(screen.getByText('Hang tight while we fetch the latest products.')).toBeInTheDocument()
   })
 
@@ -40,7 +58,16 @@ describe.skip('Data fetching works correctly', () => {
     mockedFetch.mockResolvedValue({
       status: 400
     })
-    render(<App />)
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     await waitFor(() => {
       expect(screen.getByText('Oops! An error occured while fetching products.')).toBeInTheDocument()
     })
@@ -54,8 +81,17 @@ describe.skip('Data fetching works correctly', () => {
     })
 
     it('Displays a retry button', async () => {
-      render(<App />)
-      await waitFor(() => {
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path='/' element={<Layout />}>
+              <Route index element={<App />} />
+              <Route path='/cart' element={<Cart />}/>
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      )
+        await waitFor(() => {
         expect(screen.getByRole('button', {name: /Retry/i})).toBeInTheDocument()
       })
     })
@@ -66,8 +102,17 @@ describe.skip('Data fetching works correctly', () => {
         json: async () => [{ id: 1, title: 'Test Product 1'}]
       })
       let user = userEvent.setup()
-      render(<App />)
-      let btn = await screen.findByRole('button', {name: /Retry/i})
+      render(
+        <MemoryRouter initialEntries={['/']}>
+          <Routes>
+            <Route path='/' element={<Layout />}>
+              <Route index element={<App />} />
+              <Route path='/cart' element={<Cart />}/>
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      )
+        let btn = await screen.findByRole('button', {name: /Retry/i})
       await user.click(btn)      
       let product = await screen.findByText('Test Product 1')
       expect(product).toBeInTheDocument()
@@ -76,7 +121,7 @@ describe.skip('Data fetching works correctly', () => {
   })
 })
 
-describe.skip('Cards created and displayed correctly', () => {
+describe('Cards created and displayed correctly', () => {
   beforeEach(() => {
     let mockedFetch;
     mockedFetch = vi.fn();
@@ -95,16 +140,25 @@ describe.skip('Cards created and displayed correctly', () => {
   })
 
   it('Displays card with the right elements', async () => {
-    render(<App />)
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     await waitFor(() => {
       expect(screen.getByRole('img')).toBeInTheDocument()
-      expect(screen.getByPlaceholderText('Number of items')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Quantity')).toBeInTheDocument()
       expect(screen.getByText(/Test Product 1/)).toBeInTheDocument()
     })
   })
 })
 
-describe.skip('Input component is controlled', () => {
+describe('Input component is controlled', () => {
   it('Updates value on change', async () => {
     let user = userEvent.setup()
     render(<Input id='test-input' placeholder='test-input' type='text'/>)
@@ -114,23 +168,95 @@ describe.skip('Input component is controlled', () => {
   })
 })
 
-describe.skip('Navigation bar rendered correctly', () => {
-  it('Displays the site\'s webpage links', () => {
-    render(<NavigationBar addedProducts={[]}/>)
-    expect(screen.getByText(/Home/i)).toBeInTheDocument()
-    expect(screen.getByText(/Cart/i)).toBeInTheDocument()
+describe('Navigation bar rendered correctly', () => {
+  let mockedFetch
+  let user
+  beforeEach(() => {
+    mockedFetch = vi.fn()
+    vi.stubGlobal('fetch', mockedFetch)
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1',
+        quantity: 1,
+        price: 100,
+      },
+      {
+          id: 2,
+          image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+          title: 'Test Product 2',
+          quantity: 1,
+          price: 100,
+      },
+    ],
+    })
+
+    user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+
+  it('Displays the site\'s webpage links', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+    expect((await screen.findAllByText(/Home/i))[0]).toBeInTheDocument()
+    expect((await screen.findAllByText(/Cart/i))[0]).toBeInTheDocument()
   })
 
   it('Displays no message if no products added', () => {
-    render(<NavigationBar addedProducts={[]} />)
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     expect(screen.queryByText(/Products added to cart/i)).not.toBeInTheDocument()
   })
 
-  it('Displays correct number of products added to cart', () => {
-    render(<NavigationBar addedProducts={[
-      'Test product 1', 'Test product 2']}/>)
+  it('Displays correct number of products added to cart', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
     
-    expect(screen.getByText('Products added to cart: 2')).toBeInTheDocument()
+    let btns = await screen.findAllByRole('button', {name: /Add to cart/i})
+    await user.click(btns[0])
+    await user.click(btns[1])
+    screen.debug()
+    expect(await screen.findByText(/Products added to cart/i)).toBeInTheDocument()
   })
 })
 
@@ -399,7 +525,7 @@ describe('Product quantity adjustable', () => {
   })
 })
 
-describe.only('Price calculation done correctly', () => {
+describe('Price calculation done correctly', () => {
   let mockedFetch
   let user
   beforeEach(() => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "./components/Card";
 import NavigationBar from "./components/Navbar";
 import { useOutletContext } from "react-router-dom";
+import Button from "./components/Button";
 
 function App() {
   const [productDetails, setProductDetails] = useState([])

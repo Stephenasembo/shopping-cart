@@ -159,12 +159,39 @@ describe('Cards created and displayed correctly', () => {
 })
 
 describe('Input component is controlled', () => {
+  beforeEach(() => {
+    let mockedFetch;
+    mockedFetch = vi.fn();
+    vi.stubGlobal('fetch', mockedFetch);
+    mockedFetch.mockResolvedValue({
+      status: 200,
+      json: () => [{
+        id: 1,
+        image: './assets/kees-streefkerk-Adl90-aXYwA-unsplash.jpg',
+        title: 'Test Product 1'
+      }]
+    })
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('Updates value on change', async () => {
     let user = userEvent.setup()
-    render(<Input id='test-input' placeholder='test-input' type='text'/>)
-    let input = screen.getByPlaceholderText('test-input')
-    await user.type(input, 'Test value')
-    expect(await screen.findByDisplayValue('Test value')).toBeInTheDocument()
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+    let input = await screen.findByPlaceholderText('Quantity')
+    await user.type(input, '2')
+    expect(await screen.findByDisplayValue('2')).toBeInTheDocument()
   })
 })
 
@@ -255,7 +282,6 @@ describe('Navigation bar rendered correctly', () => {
     let btns = await screen.findAllByRole('button', {name: /Add to cart/i})
     await user.click(btns[0])
     await user.click(btns[1])
-    screen.debug()
     expect(await screen.findByText(/Products added to cart/i)).toBeInTheDocument()
   })
 })
@@ -311,7 +337,6 @@ describe('Product buttons work correctly', () => {
 
     let link = screen.getByRole('link', {name: /Cart/i})
     await user.click(link)
-    screen.debug()
     expect(screen.getByText(/Products added to cart/i)).toBeInTheDocument()
   })
 })

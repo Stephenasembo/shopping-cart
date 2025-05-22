@@ -1,6 +1,7 @@
 import AddedProduct from "./AddedProduct";
 import NavigationBar from "./Navbar";
 import { useOutletContext } from "react-router-dom";
+import styles from '../styles/Cart.module.css';
 
 export default function Cart() {
   const {cartProducts, setCartProducts} = useOutletContext()
@@ -14,6 +15,7 @@ export default function Cart() {
 
   function calculateTotal() {
     let productPriceArr = [...cartProducts.values()]
+    console.log(productPriceArr)
     return productPriceArr.reduce((total, item) => {
       return total + (item.price * item.quantity)
     }, 0)
@@ -24,7 +26,7 @@ export default function Cart() {
       <NavigationBar addedProducts={cartProducts} />
       {cartProducts.size > 0 ?
         <div>
-            <ul>
+            <ul className={styles.productList}>
               {
                 [...cartProducts.values()].map((value) => {
                   return (

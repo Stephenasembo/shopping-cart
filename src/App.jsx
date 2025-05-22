@@ -45,6 +45,7 @@ function App() {
     let selectedProduct = productDetails.find((product) => {
       return product.id === Number(btnId)
     })
+    selectedProduct.quantity = 1
     let newProducts = new Map([...cartProducts])
     newProducts.set(btnId, selectedProduct)
     setCartProducts(newProducts)

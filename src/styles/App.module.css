@@ -1,0 +1,13 @@
+.container {
+  width: 100%;
+}
+
+.products {
+  list-style-type: none;
+}
+
+label {
+  display: grid;
+  grid-template-columns: max-content 8ch;
+  grid-template-rows: 1fr;
+}

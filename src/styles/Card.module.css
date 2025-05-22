@@ -1,0 +1,12 @@
+.card {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 1rem;
+}
+
+h3 {
+  width: fit-content;
+}

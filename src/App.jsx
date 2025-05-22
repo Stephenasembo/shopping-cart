@@ -3,6 +3,7 @@ import Card from "./components/Card";
 import NavigationBar from "./components/Navbar";
 import { useOutletContext } from "react-router-dom";
 import Button from "./components/Button";
+import styles from './styles/App.module.css';
 
 function App() {
   const [productDetails, setProductDetails] = useState([])
@@ -126,7 +127,7 @@ function App() {
       }
       {
         dataAvailable &&
-        <ul>
+        <ul className={styles.products}>
           {productDetails.map((product) => (
             <li
             key={product.id}>

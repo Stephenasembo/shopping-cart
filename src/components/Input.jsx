@@ -6,7 +6,7 @@ export default function Input({type, placeholder, id, value, setValue}) {
     type={type}
     placeholder={placeholder}
     id={id}
-    value={value}
+    value={value ? value : 'Quantity'}
     onChange={(e) => setValue(e.target.value)}
     min={1}
     step={1}

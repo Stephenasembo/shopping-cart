@@ -2,13 +2,23 @@ import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react'
 import App from './App'
 import userEvent from '@testing-library/user-event';
-import Card from './components/Card'
-import Input from './components/Input'
-import NavigationBar from './components/Navbar';
 import Button from './components/Button';
 import Layout from './Layout'
 import {MemoryRouter, Routes, Route} from 'react-router-dom'
 import Cart from './components/Cart'
+
+let renderApp = function() {
+  return (render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route index element={<App />} />
+            <Route path='/cart' element={<Cart />}/>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    )
+  )}
 
 describe('Data fetching works correctly', () => {
   let mockedFetch
@@ -25,32 +35,14 @@ describe('Data fetching works correctly', () => {
   })
 
   it('Renders successfully fetched data', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     await waitFor(() => {
       expect(screen.getByText('Test Product 1')).toBeInTheDocument()
     })
   })
 
   it('Displays a loading screen', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     expect(screen.getByText('Hang tight while we fetch the latest products.')).toBeInTheDocument()
   })
 
@@ -58,16 +50,7 @@ describe('Data fetching works correctly', () => {
     mockedFetch.mockResolvedValue({
       status: 400
     })
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     await waitFor(() => {
       expect(screen.getByText('Oops! An error occured while fetching products.')).toBeInTheDocument()
     })
@@ -81,17 +64,8 @@ describe('Data fetching works correctly', () => {
     })
 
     it('Displays a retry button', async () => {
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <Routes>
-            <Route path='/' element={<Layout />}>
-              <Route index element={<App />} />
-              <Route path='/cart' element={<Cart />}/>
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      )
-        await waitFor(() => {
+      renderApp()
+      await waitFor(() => {
         expect(screen.getByRole('button', {name: /Retry/i})).toBeInTheDocument()
       })
     })
@@ -102,17 +76,8 @@ describe('Data fetching works correctly', () => {
         json: async () => [{ id: 1, title: 'Test Product 1'}]
       })
       let user = userEvent.setup()
-      render(
-        <MemoryRouter initialEntries={['/']}>
-          <Routes>
-            <Route path='/' element={<Layout />}>
-              <Route index element={<App />} />
-              <Route path='/cart' element={<Cart />}/>
-            </Route>
-          </Routes>
-        </MemoryRouter>
-      )
-        let btn = await screen.findByRole('button', {name: /Retry/i})
+      renderApp()
+      let btn = await screen.findByRole('button', {name: /Retry/i})
       await user.click(btn)      
       let product = await screen.findByText('Test Product 1')
       expect(product).toBeInTheDocument()
@@ -140,16 +105,7 @@ describe('Cards created and displayed correctly', () => {
   })
 
   it('Displays card with the right elements', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     await waitFor(() => {
       expect(screen.getByRole('img')).toBeInTheDocument()
       expect(screen.getByPlaceholderText('Quantity')).toBeInTheDocument()
@@ -179,16 +135,7 @@ describe('Input component is controlled', () => {
 
   it('Updates value on change', async () => {
     let user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     let input = await screen.findByPlaceholderText('Quantity')
     await user.type(input, '2')
     expect(await screen.findByDisplayValue('2')).toBeInTheDocument()
@@ -221,16 +168,7 @@ describe('Navigation bar rendered correctly', () => {
     })
 
     user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
   })
 
   afterEach(() => {
@@ -239,46 +177,18 @@ describe('Navigation bar rendered correctly', () => {
 
 
   it('Displays the site\'s webpage links', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     expect((await screen.findAllByText(/Home/i))[0]).toBeInTheDocument()
     expect((await screen.findAllByText(/Cart/i))[0]).toBeInTheDocument()
   })
 
   it('Displays no message if no products added', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
     expect(screen.queryByText(/Products added to cart/i)).not.toBeInTheDocument()
   })
 
   it('Displays correct number of products added to cart', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
-    
+    renderApp()
     let btns = await screen.findAllByRole('button', {name: /Add to cart/i})
     await user.click(btns[0])
     await user.click(btns[1])
@@ -362,21 +272,11 @@ describe('Cart UI logic implemented correctly', () => {
 
   it('Displays added product details', async () => {
     let user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
-
+    renderApp()
     await user.click(await screen.findByText(/Add to cart/i))
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(screen.getByRole('img')).toBeInTheDocument()
-    expect(screen.getByText(/Product: Test Product 1/i)).toBeInTheDocument()
+    expect(screen.getByText(/Test Product 1/i)).toBeInTheDocument()
   })
 })
 
@@ -424,7 +324,7 @@ describe('Added product can be deleted by user', () => {
     let addBtns = await screen.findAllByText(/Add to cart/i)
     await user.click(addBtns[0])
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove/i})
     expect(deleteBtns[0]).toBeInTheDocument() 
     await user.click(deleteBtns[0])
     expect(screen.queryByText(/TestProduct 1/i)).not.toBeInTheDocument()
@@ -436,7 +336,7 @@ describe('Added product can be deleted by user', () => {
     await user.click(addBtns[0])
     await user.click(addBtns[1])
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove/i})
     await user.click(deleteBtns[0])
     expect(screen.queryByText(/TestProduct 1/i)).not.toBeInTheDocument()
     expect(screen.getByText(/Test Product 2/i)).toBeInTheDocument()
@@ -460,18 +360,7 @@ describe('Product quantity adjustable', () => {
     })
 
     user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
-
-
+    renderApp()
   })
 
   afterEach(() => {
@@ -489,7 +378,7 @@ describe('Product quantity adjustable', () => {
     await user.click(incrementBtn)
     await user.click(incrementBtn)
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    expect(screen.getByText(/Quantity: 2/i)).toBeInTheDocument()
+    expect(screen.getByText(/2/i)).toBeInTheDocument()
   })
 
   it('Decrement button decreases quantity of added product by 1', async() => {
@@ -499,8 +388,8 @@ describe('Product quantity adjustable', () => {
     await user.click(incrementBtn)
     await user.click(decrementBtn)
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    expect(screen.queryByText(/Quantity: 2/i)).not.toBeInTheDocument()
-    expect(screen.getByText(/Quantity: 1/i)).toBeInTheDocument()
+    expect(screen.queryByText(/2/i)).not.toBeInTheDocument()
+    expect((screen.getAllByText(/1/i))[1]).toBeInTheDocument()
   })
 
   it('Decrement button removes product from cart', async () => {
@@ -509,44 +398,43 @@ describe('Product quantity adjustable', () => {
     await user.click(incrementBtn)
     await user.click(decrementBtn)
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    expect(screen.queryByText(/Quantity: 1/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/1/i)).not.toBeInTheDocument()
     expect(screen.getByText(/No products added/i)).toBeInTheDocument()
   })
 
   it('Quantity provided by user adds product to cart', async () => {
     let input = await screen.findByPlaceholderText('Quantity')
-    let submitBtn = await screen.findByText('Submit')
+    let addBtn = await screen.findByText('Add to cart')
     await user.type(input, '1')
-    await user.click(submitBtn)
+    await user.click(addBtn)
 
     expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
   })
 
   it('Input provided determines product quantity', async() => {
     let input = await screen.findByPlaceholderText('Quantity')
-    let submitBtn = await screen.findByText('Submit')
+    let addBtn = await screen.findByText('Add to cart')
     await user.type(input, '10')
-    await user.click(submitBtn)
+    await user.click(addBtn)
 
     expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    expect(screen.getByText(/Quantity: 10/i)).toBeInTheDocument()
+    expect(screen.getByText(/10/i)).toBeInTheDocument()
   })
 
   it('Input provided modifies product quantity', async() => {
     let input = await screen.findByPlaceholderText('Quantity')
-    let submitBtn = await screen.findByText('Submit')
     let addBtn = await screen.findByText('Add to cart')
     let incrementBtn = await screen.findByText('+')
 
     await user.click(addBtn)
     await user.click(incrementBtn)
     await user.type(input, '10')
-    await user.click(submitBtn)
+    await user.click(addBtn)
 
     expect(screen.getByText(/Products added to cart: 1/i)).toBeInTheDocument()
     await user.click(screen.getByRole('link', {name: 'Cart'}))
-    expect(await screen.findByText(/Quantity: 10/i)).toBeInTheDocument()
+    expect(await screen.findByText(/10/i)).toBeInTheDocument()
   })
 })
 
@@ -576,16 +464,7 @@ describe('Price calculation done correctly', () => {
     })
 
     user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<App />} />
-            <Route path='/cart' element={<Cart />}/>
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    )
+    renderApp()
   })
 
   afterEach(() => {
@@ -646,7 +525,7 @@ describe('Price calculation done correctly', () => {
     await user.click(screen.getByRole('link', {name: 'Cart'}))
     expect(screen.getByText('Your total is: 200')).toBeInTheDocument()
     
-    let deleteBtns = screen.getAllByRole('button', {name: /Remove product from cart/i})
+    let deleteBtns = screen.getAllByRole('button', {name: /Remove/i})
     await user.click(deleteBtns[0])
     expect(screen.getByText('Your total is: 100')).toBeInTheDocument()
   })

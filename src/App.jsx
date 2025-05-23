@@ -104,7 +104,7 @@ function App() {
           newCart.set(productId, updatedProduct)
           setCartProducts(newCart)  
         } else {
-          let product = productDetails.find((item) => productId === item.id)
+          let product = productDetails.find((item) => Number(productId) === item.id)
           let newCart = new Map([...cartProducts])
           let updatedProduct = {...product, quantity: value}
           newCart.set(productId, updatedProduct)

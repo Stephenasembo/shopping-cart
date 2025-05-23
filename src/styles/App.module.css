@@ -9,8 +9,10 @@
 
 label {
   display: grid;
-  grid-template-columns: max-content 8ch;
+  grid-template-columns: max-content 10ch;
   grid-template-rows: 1fr;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .retryBtn {
@@ -20,4 +22,21 @@ label {
   display: block;
   margin: auto;
   font-size: 1rem;
+}
+
+.products > li {
+  border: 1px solid black;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+@media (min-width: 700px) {
+ .products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+ }
+
+ .products > li {
+  margin-right: 1rem;
+ }
 }

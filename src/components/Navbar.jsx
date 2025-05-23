@@ -9,7 +9,7 @@ export default function NavigationBar({addedProducts = new Set()}) {
         <Link to="/cart">Cart</Link>
       </div>
       {addedProducts.size > 0 && 
-        <div>
+        <div className={styles.cartProducts}>
           Products added to cart: {addedProducts.size}
         </div>
       }

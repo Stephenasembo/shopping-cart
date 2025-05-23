@@ -6,7 +6,6 @@
 }
 
 .links {
-  margin: 1rem;
   display: grid;
   grid-template-columns: repeat(2, max-content);
   grid-template-rows: 1fr;
@@ -15,10 +14,24 @@
 }
 
 .links > a {
-  /* border: 1px solid rgb(97, 87, 87); */
-  padding: 1rem;
+  border: 1px solid rgb(97, 87, 87);
+  padding: 0.5rem;
   font-size: 1.2rem;
   background-color: #b47c7c;
   border-radius: 1.5rem;
   text-decoration: none;
+}
+
+.cartProducts {
+  width: max-content;
+  margin: auto;
+  padding-bottom: 0.5rem;
+}
+
+
+@media (min-width: 700px) {
+  .links {
+    justify-content: flex-end;
+    gap: 2rem;
+  }
 }

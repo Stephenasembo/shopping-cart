@@ -90,7 +90,7 @@ function App() {
 
   function submitQuantity(e, inputVal) {
     let value = Number(inputVal)
-    let productId = ((e.currentTarget.id).split('submit'))[1]
+    let productId = ((e.currentTarget.id).split('product'))[1]
     if(value === 1) {
       addToCart(null, productId)
     } else if(value > 1) {
@@ -110,6 +110,14 @@ function App() {
           newCart.set(productId, updatedProduct)
           setCartProducts(newCart)
         }
+    }
+  }
+
+  function addProduct(e, inputVal) {
+    if (inputVal !== 0) {
+      submitQuantity(e, inputVal)
+    } else {
+      addToCart(e, null)
     }
   }
 
@@ -136,10 +144,9 @@ function App() {
               imageUrl={product.image}
               productName={product.title}
               productId={product.id}
-              addProduct={(e) => {addToCart(e)}}
+              addProduct={addProduct}
               incrementFn={(e) => increaseQuantity(e)}
               decrementFn={(e) => decreaseQuantity(e)}
-              submitFn={submitQuantity}
               />
             </li>
             ))}
@@ -152,6 +159,7 @@ function App() {
             Oops! An error occured while fetching products.
           </p>
           <Button
+          className={styles.retryBtn}
           text='Retry fetching products'
           onClick={fetchData}/>
         </div>

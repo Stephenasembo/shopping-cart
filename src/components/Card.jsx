@@ -10,7 +10,6 @@ export default function Card({
   addProduct,
   incrementFn,
   decrementFn,
-  submitFn,
   }) {
   const [quantity, setQuantity] = useState(0)
 
@@ -33,11 +32,11 @@ export default function Card({
             />
           </label>
           <Button
-          text='Submit'
-          id={`submit${productId}`}
+          text='Add to cart'
+          id={`product${productId}`}
           onClick={(e) => {
             e.preventDefault()
-            submitFn(e, quantity)
+            addProduct(e, quantity)
           }}
           />
         </form>
@@ -54,11 +53,6 @@ export default function Card({
           onClick={decrementFn}
           />
         </p>
-        <Button
-        text='Add to cart'
-        id={`product${productId}`}
-        onClick={addProduct}
-        />
       </div>
     </div>
   )

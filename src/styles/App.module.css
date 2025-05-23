@@ -12,3 +12,12 @@ label {
   grid-template-columns: max-content 8ch;
   grid-template-rows: 1fr;
 }
+
+.retryBtn {
+  padding: 0.5rem;
+  border-radius: 1rem;
+  width: 150px;
+  display: block;
+  margin: auto;
+  font-size: 1rem;
+}

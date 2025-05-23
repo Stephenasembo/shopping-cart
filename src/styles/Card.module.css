@@ -10,3 +10,8 @@
 h3 {
   width: fit-content;
 }
+
+.adjustQuantity {
+  display: flex;
+  justify-content: space-evenly;
+}

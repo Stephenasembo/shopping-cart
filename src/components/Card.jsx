@@ -31,16 +31,15 @@ export default function Card({
             setValue={setQuantity}
             />
           </label>
-          <Button
+        </form>
+        <p className={styles.adjustQuantity}>
+        <Button
           text='Add to cart'
           id={`product${productId}`}
           onClick={(e) => {
-            e.preventDefault()
             addProduct(e, quantity)
           }}
           />
-        </form>
-        <p>
           <Button
           text='+'
           id={`increment${productId}`}

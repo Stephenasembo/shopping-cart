@@ -10,7 +10,7 @@ export default function NavigationBar({addedProducts = new Set()}) {
       </div>
       {addedProducts.size > 0 && 
         <div className={styles.cartProducts}>
-          Products added to cart: {addedProducts.size}
+          Unique products added to cart: {addedProducts.size}
         </div>
       }
     </div>

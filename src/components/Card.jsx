@@ -10,11 +10,22 @@ export default function Card({
   addProduct,
   incrementFn,
   decrementFn,
+  cartProducts,
   }) {
   const [quantity, setQuantity] = useState(0)
 
+  console.log(cartProducts)
+  const itemSelected = cartProducts.has(String(productId))
+  const quantitySelected = itemSelected ? cartProducts.get(String(productId)).quantity : null
+
+  console.log(itemSelected)
   return (
     <div className={styles.card}>
+      {itemSelected &&
+      <div className={styles.badge}>
+        {quantitySelected}
+      </div>
+      }
       <div>
         <img src={imageUrl} width={100} height={100}/>
       </div>

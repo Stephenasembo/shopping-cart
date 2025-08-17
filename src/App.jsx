@@ -147,6 +147,7 @@ function App() {
               addProduct={addProduct}
               incrementFn={(e) => increaseQuantity(e)}
               decrementFn={(e) => decreaseQuantity(e)}
+              cartProducts={cartProducts}
               />
             </li>
             ))}

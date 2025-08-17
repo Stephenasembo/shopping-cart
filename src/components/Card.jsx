@@ -38,6 +38,7 @@ export default function Card({
           id={`product${productId}`}
           onClick={(e) => {
             addProduct(e, quantity)
+            setQuantity(0);
           }}
           />
           <Button
